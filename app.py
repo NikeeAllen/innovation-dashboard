@@ -143,7 +143,7 @@ if not legislation.empty:
     )
 
 # PDF Export (Local Only)
-st.markdown("INF2191 - Directed Research Project)")
+st.markdown("INF2191 - Directed Research Project")
 wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\bin\wkhtmltopdf.exe"
 
 if not os.path.exists(wkhtmltopdf_path):
