@@ -13,15 +13,15 @@ st.title("📊 Innovation Scores and Legal Frameworks")
 st.markdown("""
 ### ℹ️ About This Dashboard
 
-This dashboard is part of a legal research project analyzing how differences in **IP and privacy law frameworks** affect innovation across four jurisdictions:  
-**United States, Canada, European Union, and United Kingdom**
+This dashboard is part of a legal research project analyzing how differences in **intellectual property and privacy law frameworks** affect innovation in selected IP-rich industries (pharmaceuticals, technology, financial technologies, luxury and entertainment) across four jurisdictions:  
+**United States (NY and Cali only), Canada, European Union, and United Kingdom.**
 
 ---
 
 #### 🔍 What This Dashboard Provides:
 - 📊 **Innovation scores** for each jurisdiction, tailored by industry
-- 📜 A list of **relevant IP and privacy laws** with risk scores
-- 📄 One-click download of **CSV or PDF reports**
+- 📜 A list of **relevant IP and privacy laws** with risk scores (1 = Low risk to innovators (clear, efficient, enforceable law), 10 = High risk (unclear, burdensome, under-enforced, or outdated))
+- 📄 One-click download of **CSV reports**
 
 ---
 
@@ -38,22 +38,6 @@ Each innovation score is based on a **weighted average of four global indices**:
 
 📌 **Weights vary by industry** — e.g., pharma emphasizes IP, fintech emphasizes data protection.
 
----
-
-### ⚠️ What Are Risk Scores?
-
-Each law or regulation is assigned a **Risk Score (1–10)**:
-- 1 = Low risk to innovators (clear, efficient, enforceable law)
-- 10 = High risk (unclear, burdensome, under-enforced, or outdated)
-
----
-
-### 🧭 Purpose
-
-This tool helps:
-- Startups and global counsel evaluate legal environments
-- Policymakers identify innovation gaps
-- Anyone export clean, comparative reports from authoritative data
 """)
 
 # --- Industry List ---
