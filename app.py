@@ -148,7 +148,7 @@ if not legislation.empty:
     )
 
 # --- PDF Export (wkhtmltopdf for local or fallback for Streamlit Cloud) ---
-st.subheader("📄 Export to PDF Report")
+st.subheader("📄 INF2191 - Directed Research Program")
 html_parts = []
 html_parts.append(f"<h1>Innovation Score Summary – {display_title}</h1>")
 html_parts.append(filtered_scores.drop(columns=["Explanation"]).to_html(index=False))
