@@ -9,16 +9,51 @@ import os
 st.set_page_config(page_title="Innovation Policy Dashboard", layout="wide")
 st.title("📊 Innovation Scores and Legal Frameworks")
 
-# --- Styling & Info ---
+# --- Explanation Section ---
 st.markdown("""
 ### ℹ️ About This Dashboard
 
-This interactive dashboard compares **innovation scores** and **relevant laws and risk scores** across jurisdictions and industries.
+This dashboard is part of a legal research project analyzing how differences in **IP and privacy law frameworks** affect innovation across four jurisdictions:  
+**United States, Canada, European Union, and United Kingdom**
 
-- **Innovation Scores** are derived from the Final Draft's Section 4, using composite competitiveness metrics (IP protection, privacy maturity, regulatory transparency, innovation infrastructure).
-- **Risk Scores** represent the legal risk and regulatory burden of each law or provision (1 = low risk, 10 = high risk).
-- The dashboard allows filtering, comparison, and export of results.
+---
 
+#### 🔍 What This Dashboard Provides:
+- 📊 **Innovation scores** for each jurisdiction, tailored by industry
+- 📜 A list of **relevant IP and privacy laws** with risk scores
+- 📄 One-click download of **CSV or PDF reports**
+
+---
+
+### 🧠 How Innovation Scores Are Calculated
+
+Each innovation score is based on a **weighted average of four global indices**:
+
+| Index | What It Measures |
+|-------|------------------|
+| **WIPO Global Innovation Index (GII)** | National R&D capacity, infrastructure, and IP output |
+| **U.S. Chamber International IP Index** | Strength and enforceability of IP laws |
+| **Global Data Protection Index (GDPI)** | Maturity and enforcement of privacy rights |
+| **OECD Regulatory Restrictiveness Index (RRI)** | Barriers to market entry, licensing, and operations |
+
+📌 **Weights vary by industry** — e.g., pharma emphasizes IP, fintech emphasizes data protection.
+
+---
+
+### ⚠️ What Are Risk Scores?
+
+Each law or regulation is assigned a **Risk Score (1–10)**:
+- 1 = Low risk to innovators (clear, efficient, enforceable law)
+- 10 = High risk (unclear, burdensome, under-enforced, or outdated)
+
+---
+
+### 🧭 Purpose
+
+This tool helps:
+- Startups and global counsel evaluate legal environments
+- Policymakers identify innovation gaps
+- Anyone export clean, comparative reports from authoritative data
 """)
 
 # --- Industry List ---
@@ -122,7 +157,7 @@ if not legislation.empty:
         mime="text/csv"
     )
 
-# --- PDF Export ---
+# --- PDF Export (Only if wkhtmltopdf is installed) ---
 wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\bin\wkhtmltopdf.exe"
 if os.path.exists(wkhtmltopdf_path) and st.button("📄 Download PDF Report"):
     html_parts = []
