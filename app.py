@@ -7,41 +7,25 @@ import os
 
 # --- Page Setup ---
 st.set_page_config(page_title="Innovation Policy Dashboard", layout="wide")
-
-# --- Dark Theme Styling ---
-st.markdown("""
-    <style>
-    html, body, [class*="css"]  {
-        background-color: #0e1117;
-        color: #ffffff;
-    }
-    table, th, td {
-        color: white !important;
-    }
-    .stDataFrame div[data-testid="stDataFrame"] {
-        background-color: #1e222a;
-    }
-    h1, h2, h3, h4 {
-        color: white;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 st.title("📊 Innovation Scores and Legal Frameworks")
 
+# --- Styling & Info ---
 st.markdown("""
-### 🔎 What This Dashboard Shows
+### ℹ️ About This Dashboard
 
-- 📊 Jurisdiction-specific innovation scores from Final Draft (Section 4)
-- 📜 Relevant laws & barriers by jurisdiction and industry
-- 📄 Export results as CSV 
+This interactive dashboard compares **innovation scores** and **relevant laws and risk scores** across jurisdictions and industries.
+
+- **Innovation Scores** are derived from the Final Draft's Section 4, using composite competitiveness metrics (IP protection, privacy maturity, regulatory transparency, innovation infrastructure).
+- **Risk Scores** represent the legal risk and regulatory burden of each law or provision (1 = low risk, 10 = high risk).
+- The dashboard allows filtering, comparison, and export of results.
+
 """)
 
 # --- Industry List ---
 industries = ["All Industries", "Luxury", "Entertainment", "Pharmaceuticals", "Technology", "Fintech"]
 selected_industry = st.selectbox("Select industry:", industries)
 
-# --- Innovation Scores ---
+# --- Innovation Scores (from Final Draft Section 4) ---
 data = {
     "Jurisdiction": ["United States", "European Union", "United Kingdom", "Canada"],
     "Luxury": [8.3, 8.5, 8.2, 6.9],
@@ -60,7 +44,7 @@ tooltip_notes = {
 }
 score_df["Explanation"] = score_df["Jurisdiction"].map(tooltip_notes)
 
-# Calculate scores
+# --- Innovation Score Logic ---
 if selected_industry == "All Industries":
     score_df["Innovation Score"] = score_df[["Luxury", "Entertainment", "Pharmaceuticals", "Technology", "Fintech"]].mean(axis=1)
     display_title = "All Industries"
@@ -68,7 +52,7 @@ else:
     score_df["Innovation Score"] = score_df[selected_industry]
     display_title = selected_industry
 
-# Jurisdiction Filter
+# --- Jurisdiction Filter ---
 selected_jurisdictions = st.multiselect(
     "Filter jurisdictions:",
     score_df["Jurisdiction"].tolist(),
@@ -91,18 +75,17 @@ fig = px.bar(
 fig.update_layout(yaxis=dict(range=[0, 10]), xaxis_tickangle=-45, height=500)
 st.plotly_chart(fig, use_container_width=True)
 
-# --- Load Legislation Data ---
+# --- Load & Normalize Legislation Data ---
 file_path = "laws_import.xlsx"
 df = pd.read_excel(file_path)
 
-# Normalize names
 df["Jurisdiction"] = df["Jurisdiction"].replace({
     "UK": "United Kingdom",
     "EU": "European Union",
-    "United States": "United States of America"
+    "United States of America": "United States"
 })
 
-# Filter legislation
+# --- Filter Legislation ---
 if selected_industry == "All Industries":
     legislation = df[df["Jurisdiction"].isin(selected_jurisdictions)]
 else:
@@ -111,10 +94,7 @@ else:
         (df["Relevant Industry"].str.contains(selected_industry, case=False, na=False))
     ]
 
-legislation = legislation[[
-    "Jurisdiction", "Law/Subprovision", "Significance",
-    "Innovation Stage", "Enforceability", "Risk Score"
-]]
+legislation = legislation[[ "Jurisdiction", "Law/Subprovision", "Significance", "Innovation Stage", "Enforceability", "Risk Score" ]]
 
 # --- Show Legislation Table ---
 st.subheader(f"📜 Relevant Laws & Barriers – {display_title}")
@@ -126,7 +106,7 @@ else:
 # --- Export Section ---
 st.subheader("📤 Export Innovation Data")
 
-# CSV Export (Always Works)
+# CSV Export
 st.download_button(
     label="📥 Download Innovation Scores (CSV)",
     data=filtered_scores.drop(columns=["Explanation"]).to_csv(index=False),
@@ -142,47 +122,42 @@ if not legislation.empty:
         mime="text/csv"
     )
 
-# PDF Export (Local Only)
-st.markdown("INF2191 - Directed Research Project")
+# --- PDF Export ---
 wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\bin\wkhtmltopdf.exe"
+if os.path.exists(wkhtmltopdf_path) and st.button("📄 Download PDF Report"):
+    html_parts = []
+    html_parts.append(f"<h1>Innovation Score Summary – {display_title}</h1>")
+    html_parts.append(filtered_scores.drop(columns=["Explanation"]).to_html(index=False))
 
-if not os.path.exists(wkhtmltopdf_path):
-    st.info("Comparative Global Analysis of How Differences in IP and Privacy Laws Influence Innovation Across IP-Rich Industries")
-else:
-    if st.button("📄 Download PDF Report"):
-        html_parts = []
-        html_parts.append(f"<h1>Innovation Score Summary – {display_title}</h1>")
-        html_parts.append(filtered_scores.drop(columns=["Explanation"]).to_html(index=False))
+    if not legislation.empty:
+        html_parts.append(f"<h2>Relevant Laws & Barriers – {display_title}</h2>")
+        html_parts.append(legislation.to_html(index=False))
+    else:
+        html_parts.append("<p><i>No legislation found for this combination.</i></p>")
 
-        if not legislation.empty:
-            html_parts.append(f"<h2>Relevant Laws & Barriers – {display_title}</h2>")
-            html_parts.append(legislation.to_html(index=False))
-        else:
-            html_parts.append("<p><i>No legislation found for this combination.</i></p>")
+    full_html = f"""
+    <html>
+    <head>
+    <style>
+    body {{ font-family: Arial, sans-serif; color: #ffffff; background-color: #0e1117; }}
+    h1 {{ color: #00ccff; }}
+    h2 {{ color: #66d9ef; margin-top: 30px; }}
+    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
+    th, td {{ border: 1px solid #444; padding: 8px; font-size: 12px; color: #ffffff; }}
+    th {{ background-color: #333; }}
+    </style>
+    </head>
+    <body>{''.join(html_parts)}</body>
+    </html>
+    """
 
-        full_html = f"""
-        <html>
-        <head>
-        <style>
-        body {{ font-family: Arial, sans-serif; color: #ffffff; background-color: #0e1117; }}
-        h1 {{ color: #00ccff; }}
-        h2 {{ color: #66d9ef; margin-top: 30px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
-        th, td {{ border: 1px solid #444; padding: 8px; font-size: 12px; color: #ffffff; }}
-        th {{ background-color: #333; }}
-        </style>
-        </head>
-        <body>{''.join(html_parts)}</body>
-        </html>
-        """
-
-        config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
-            pdfkit.from_string(full_html, tmpfile.name, configuration=config)
-            with open(tmpfile.name, "rb") as f:
-                st.download_button(
-                    label="📄 Download PDF Report",
-                    data=f,
-                    file_name=f"{display_title.lower().replace(' ', '_')}_innovation_report.pdf",
-                    mime="application/pdf"
-                )
+    config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
+        pdfkit.from_string(full_html, tmpfile.name, configuration=config)
+        with open(tmpfile.name, "rb") as f:
+            st.download_button(
+                label="📄 Download PDF Report",
+                data=f,
+                file_name=f"{display_title.lower().replace(' ', '_')}_innovation_report.pdf",
+                mime="application/pdf"
+            )
