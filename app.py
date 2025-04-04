@@ -18,7 +18,7 @@ This dashboard supports a research project analyzing how differences in intellec
 It allows you to:
 - 📊 View innovation scores by jurisdiction and industry
 - 📜 See relevant laws and regulatory risks
-- 📄 Download a PDF or CSV report
+- 📄 Download a CSV report
 
 ---
 
@@ -191,4 +191,4 @@ try:
                 mime="application/pdf"
             )
 except Exception as e:
-    st.info("⚠️ PDF download is unavailable in your environment.")
+    st.info("Comparative Global Analysis of How Differences in IP and Privacy Laws Influence Innovation Across IP-Rich Industries")
