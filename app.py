@@ -143,11 +143,11 @@ if not legislation.empty:
     )
 
 # PDF Export (Local Only)
-st.markdown("### 📄 PDF Export (works when run locally with wkhtmltopdf)")
+st.markdown("INF2191 - Directed Research Project)")
 wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\bin\wkhtmltopdf.exe"
 
 if not os.path.exists(wkhtmltopdf_path):
-    st.info("⚠️ PDF export only works locally. Please install wkhtmltopdf and run Streamlit locally.")
+    st.info("Comparative Global Analysis of How Differences in IP and Privacy Laws Influence Innovation Across IP-Rich Industries")
 else:
     if st.button("📄 Download PDF Report"):
         html_parts = []
